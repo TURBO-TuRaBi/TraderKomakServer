@@ -2,15 +2,21 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+const cors = require('cors'); // اضافه کردن cors
 
 const app = express();
 
 // تنظیمات اوآندا
-const API_KEY = process.env.API_KEY;
-const ACCOUNT_ID = process.env.ACCOUNT_ID;
+const API_KEY = process.env.OANDA_API_KEY || 'd8c6164227543798ccee5eedea0a47bc-dd130b835631be76c4979cea43236e27';
+const ACCOUNT_ID = process.env.OANDA_ACCOUNT_ID || '101-001-12588109-002';
 const BASE_URL = 'https://api-fxpractice.oanda.com';
 
-// سرو فایل‌های استاتیک
+// تنظیم CORS
+app.use(cors({
+    origin: 'https://traderkomak.netlify.app' // فقط به Netlify اجازه بده
+}));
+
+// سرو فایل‌های استاتیک (اگه لازم نیست، می‌تونی حذف کنی)
 app.use(express.static(path.join(__dirname, '..')));
 app.use(express.json());
 
@@ -70,6 +76,8 @@ app.get('/test', (req, res) => {
     res.send('سرور روی پورت 3000 فعال است');
 });
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+// پورت دینامیک برای Render
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
